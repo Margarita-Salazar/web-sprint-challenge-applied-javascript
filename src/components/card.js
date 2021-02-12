@@ -1,3 +1,4 @@
+import axios from 'axios';
 const Card = (article) => {
   // TASK 5
   // ---------------------
@@ -17,8 +18,36 @@ const Card = (article) => {
   //   </div>
   // </div>
   //
-}
+  // Initiating Elements
+  const card = document.createElement('div');  
+  const cardHeadline = document.createElement('div');
+  const cardAuthor= document.createElement('div');
+  const imgContainer= document.createElement('div');
+  const img = document.createElement('img');
+  const authorName = document.createElement('span');
+  // Adding class name and content
+  card.classList.add('card');
+  cardHeadline.classList.add('headline');
+  cardAuthor.classList.add('author');
+  imgContainer.classList.add('img-container');
+  
+  card.addEventListener('click', ()=>{
+    console.log(article.headline)
+  })
+  cardHeadline.textContent = article.headline;
+  img.setAttribute('src', article.authorPhoto);
+  authorName.textContent = `By ${article.authorName}`;
+  //Creating hierarchy
+  card.appendChild(cardHeadline);
+  card.appendChild(cardAuthor);
+  cardAuthor.appendChild(imgContainer);
+  cardAuthor.appendChild(authorName);
+  imgContainer.appendChild(img);
 
+  return card;
+
+}
+// console.log('Card', Card())
 const cardAppender = (selector) => {
   // TASK 6
   // ---------------------
@@ -28,6 +57,21 @@ const cardAppender = (selector) => {
   // Create a card from each and every article object in the response, using the Card component.
   // Append each card to the element in the DOM that matches the selector passed to the function.
   //
+  const cardsContainer = document.querySelector(selector);
+  axios.get('https://lambda-times-api.herokuapp.com/articles')
+  .then((res)=>{
+    console.log('Article',res.data.articles);
+    const dataObj = res.data.articles
+    for (const [key, value] of Object.entries(dataObj)) {
+      value.forEach(article => {
+        cardsContainer.append(Card(article));
+      });
+    }
+    
+  })
+  .catch((err)=>{
+    console.log('something went wrong', err)
+  });
 }
 
 export { Card, cardAppender }
